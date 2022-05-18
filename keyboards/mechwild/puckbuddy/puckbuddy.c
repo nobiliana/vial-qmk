@@ -3,11 +3,26 @@
 
 #include "puckbuddy.h"
 
+#ifndef GLIDEPOINT_DPI_OPTIONS
+#    define GLIDEPOINT_DPI_OPTIONS \
+        { 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000 }
+#    ifndef GLIDEPOINT_DPI_DEFAULT
+#        define GLIDEPOINT_DPI_DEFAULT 1
+#    endif
+#endif
+#ifndef GLIDEPOINT_DPI_DEFAULT
+#    define GLIDEPOINT_DPI_DEFAULT 1
+#endif
+
+keyboard_config_t keyboard_config;
+uint16_t          dpi_array[] = GLIDEPOINT_DPI_OPTIONS;
+#define DPI_OPTION_SIZE (sizeof(dpi_array) / sizeof(uint16_t))
+
 void board_init(void) {
     // B9 is configured as I2C1_SDA in the board file; that function must be
     // disabled before using B7 as I2C1_SDA.
     setPinInputHigh(B9);
-    pointing_device_set_cpi(3000);
+    //pointing_device_set_cpi(3000);
 }
 
 #ifdef ENCODER_ENABLE
@@ -39,14 +54,23 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     }
 
     bool clear_screen = false;          // used to manage singular screen clears to prevent display glitch
-    static void render_name(void) {     // Render Mercutio Script Text
-        static const char PROGMEM mercutio_name[] = {
-            0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0x95, 0xB5, 0x96, 0xD5, 0xB6, 0xB6,
-            0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
-            0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
-            0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
-        };
-        oled_write_P(mercutio_name, false);
+    static void render_name(void) {     // Render Puckbuddy Get Puck'd text
+        static const char PROGMEM name_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92};
+        static const char PROGMEM name_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2};
+        static const char PROGMEM name_3[] = {0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xB6, 0xB6, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2};
+        //static const char PROGMEM puckbuddy_name[] = {
+        //    0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92,
+        //    0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2,
+        //    0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xB6, 0xB6, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2,
+        //    0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0xB6, 0x00
+        //};
+        //oled_write_P(puckbuddy_name, false);
+        oled_set_cursor(0,0);
+        oled_write_P(name_1, false);
+        oled_set_cursor(0,1);
+        oled_write_P(name_2, false);
+        oled_set_cursor(0,2);
+        oled_write_P(name_3, false);
     }
 
     static void render_logo(void) {     // Render MechWild "MW" Logo
@@ -65,9 +89,43 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     }
 
     bool oled_task_kb(void) {
-
         if ( IS_HOST_LED_OFF(USB_LED_NUM_LOCK) && IS_HOST_LED_OFF(USB_LED_CAPS_LOCK) && get_highest_layer(layer_state) == 0 ) {
             render_name();
+            oled_set_cursor(0,3);
+            switch (keyboard_config.dpi_config) {   // { 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000 }
+                case 0:
+                    oled_write_P(PSTR("      DPI: 400       "), false);
+                    break;
+                case 1:
+                    oled_write_P(PSTR("      DPI: 800       "), false);
+                    break;
+                case 2:
+                    oled_write_P(PSTR("      DPI: 1200      "), false);
+                    break;
+                case 3:
+                    oled_write_P(PSTR("      DPI: 1600      "), false);
+                    break;
+                case 4:
+                    oled_write_P(PSTR("      DPI: 2000      "), false);
+                    break;
+                case 5:
+                    oled_write_P(PSTR("      DPI: 2400      "), false);
+                    break;
+                case 6:
+                    oled_write_P(PSTR("      DPI: 2800      "), false);
+                    break;
+                case 7:
+                    oled_write_P(PSTR("      DPI: 3200      "), false);
+                    break;
+                case 8:
+                    oled_write_P(PSTR("      DPI: 3600      "), false);
+                    break;
+                case 9:
+                    oled_write_P(PSTR("      DPI: 4000      "), false);
+                    break;
+                default:
+                    oled_write_P(PSTR("      DPI: ????      "), false);    // Should never display, here as a catchall
+            }
             clear_screen = true;
         } else {
             if (clear_screen == true) {
@@ -99,7 +157,93 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
             oled_set_cursor(8,1);
             oled_write_P(led_state.num_lock ? PSTR("NLCK ") : PSTR("     "), false);
             oled_write_P(led_state.caps_lock ? PSTR("CAPS ") : PSTR("     "), false);
+            oled_set_cursor(8,3);
+            switch (keyboard_config.dpi_config) {   // 512, 1024, 2048, 3072, 4096
+                case 0:
+                    oled_write_P(PSTR("DPI: 400 "), false);
+                    break;
+                case 1:
+                    oled_write_P(PSTR("DPI: 800 "), false);
+                    break;
+                case 2:
+                    oled_write_P(PSTR("DPI: 1200"), false);
+                    break;
+                case 3:
+                    oled_write_P(PSTR("DPI: 1600"), false);
+                    break;
+                case 4:
+                    oled_write_P(PSTR("DPI: 2000"), false);
+                    break;
+                case 5:
+                    oled_write_P(PSTR("DPI: 2400"), false);
+                    break;
+                case 6:
+                    oled_write_P(PSTR("DPI: 2800"), false);
+                    break;
+                case 7:
+                    oled_write_P(PSTR("DPI: 3200"), false);
+                    break;
+                case 8:
+                    oled_write_P(PSTR("DPI: 3600"), false);
+                    break;
+                case 9:
+                    oled_write_P(PSTR("DPI: 4000"), false);
+                    break;
+                default:
+                    oled_write_P(PSTR("DPI: ????"), false);    // Should never display, here as a catchall
+            }
         }
     return false;
     }
 #endif
+
+bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
+    switch(keycode) {
+        case DPI_UP:
+            if (record->event.pressed) {
+                keyboard_config.dpi_config = (keyboard_config.dpi_config + 1) % DPI_OPTION_SIZE;
+                eeconfig_update_kb(keyboard_config.raw);
+                pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
+            }
+            return false;
+        case DPI_DN:
+            if (record->event.pressed) {
+                if (keyboard_config.dpi_config > 0) {
+                    keyboard_config.dpi_config = (keyboard_config.dpi_config - 1) % DPI_OPTION_SIZE;
+                } else {
+                    keyboard_config.dpi_config = DPI_OPTION_SIZE - 1;
+                }
+                eeconfig_update_kb(keyboard_config.raw);
+                pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
+            }
+            return false;
+    }
+    
+    return process_record_user(keycode, record);
+}
+
+void pointing_device_init_kb(void) {
+    pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
+}
+
+void eeconfig_init_kb(void) {
+    keyboard_config.dpi_config = GLIDEPOINT_DPI_DEFAULT;
+    eeconfig_update_kb(keyboard_config.raw);
+    eeconfig_init_user();
+}
+
+void matrix_init_kb(void) {
+    // is safe to just read DPI setting since matrix init
+    // comes before pointing device init.
+    keyboard_config.raw = eeconfig_read_kb();
+    if (keyboard_config.dpi_config > DPI_OPTION_SIZE) {
+        eeconfig_init_kb();
+    }
+    matrix_init_user();
+}
+
+void keyboard_post_init_kb(void) {
+    pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
+
+    keyboard_post_init_user();
+}

@@ -40,11 +40,11 @@ extern uint16_t          dpi_array[];
 enum keyboard_keycodes {
 #ifdef VIAL_ENABLE
     DPI_UP = USER00,
-    DPI_DN,
-    NEW_SAFE_RANGE
 #else
     DPI_UP = SAFE_RANGE,
-    DPI_DN,
-    NEW_SAFE_RANGE
 #endif
+    DPI_DN,
+    DPI_FINE,
+    NEW_SAFE_RANGE
+
 };

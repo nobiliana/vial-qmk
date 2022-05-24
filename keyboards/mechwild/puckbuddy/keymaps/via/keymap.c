@@ -34,6 +34,7 @@ enum layer_names {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
     [_BASE] = LAYOUT(
+<<<<<<< HEAD
     KC_MUTE,  MO(_FN3), MO(_FN2), MO(_FN1),       LGUI(KC_D),
     KC_HOME,                                      KC_PGUP,
     KC_END,                                       KC_PGDN,
@@ -43,6 +44,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     RGB_TOG, KC_TRNS, KC_TRNS, KC_TRNS,          RESET,
     RGB_MOD,                                     DPI_UP,
     RGB_RMOD,                                    DPI_DN,
+=======
+    KC_MUTE,  MO(_FN3), MO(_FN2), MO(_FN1),       LGUI(KC_D),    
+    KC_HOME,                                      KC_PGUP,    
+    KC_END,                                       KC_PGDN,    
+    KC_BTN3,  KC_BTN1, KC_BTN2, KC_BTN2, KC_BTN1, DPI_FINE
+    ),
+    [_FN1] = LAYOUT(                                                                                   
+    RGB_TOG, KC_TRNS, KC_TRNS, KC_TRNS,          RESET, 
+    KC_TRNS,                                     DPI_UP, 
+    KC_TRNS,                                     DPI_DN, 
+>>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
     ),
     [_FN2] = LAYOUT(

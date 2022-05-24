@@ -3,6 +3,11 @@
   "vendorId": "0x6D77",
   "productId": "0x170F",
   "lighting": "qmk_rgblight",
+  "customKeycodes": [
+    {"name": "DPI Up", "title": "DPI Up", "shortName": "DPIU"},
+    {"name": "DPI Down", "title": "DPI Down", "shortName": "DPID"},
+    {"name": "DPI Fine", "title": "DPI Fine", "shortName": "DPI Fine"}
+  ],
   "matrix": { "rows": 4, "cols": 4 },
   "layouts": {
     "keymap": [

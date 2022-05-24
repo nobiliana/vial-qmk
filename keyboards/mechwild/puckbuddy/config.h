@@ -45,7 +45,11 @@
 
 /* spi config */
 #define SPI_DRIVER SPID1
+<<<<<<< HEAD
 #define SPI_SCK_PIN A5
+=======
+#define SPI_SCK_PIN A5    
+>>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
 #define SPI_SCK_PAL_MODE 5
 #define SPI_MOSI_PIN A7
 #define SPI_MOSI_PAL_MODE 5

@@ -25,11 +25,7 @@ void board_init(void) {
 }
 
 #ifdef DIP_SWITCH_ENABLE
-<<<<<<< HEAD
 bool dip_switch_update_kb(uint8_t index, bool active) {
-=======
-bool dip_switch_update_kb(uint8_t index, bool active) { 
->>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
     if (!dip_switch_update_user(index, active)) { return false; }
     switch (index) {
         case 0:
@@ -70,6 +66,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool clear_screen = false;          // used to manage singular screen clears to prevent display glitch
+bool clear_screen_art = false;      // used to manage singular screen clears to prevent display glitch
 static void render_name(void) {     // Render Puckbuddy "Get Puck'd" text
     static const char PROGMEM name_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92};
     static const char PROGMEM name_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2};
@@ -96,10 +93,14 @@ static void render_logo(void) {     // Render MechWild "MW" Logo
     oled_set_cursor(0,3);
     oled_write_P(logo_4, false);
 }
-<<<<<<< HEAD
 
 bool oled_task_kb(void) {
     if ( IS_HOST_LED_OFF(USB_LED_NUM_LOCK) && IS_HOST_LED_OFF(USB_LED_CAPS_LOCK) && get_highest_layer(layer_state) == 0 ) {
+        if (clear_screen_art == true) {
+            oled_clear();
+            oled_render();
+            clear_screen_art = false;
+        }
         render_name();
         oled_set_cursor(6,3);
         oled_write_P(PSTR("DPI: "), false);
@@ -138,123 +139,12 @@ bool oled_task_kb(void) {
         oled_set_cursor(8,3);
         oled_write_P(PSTR("DPI: "), false);
         oled_write(get_u16_str(dpi_array[keyboard_config.dpi_config], ' '), false);
+        clear_screen_art = true;
     }
     return false;
 }
 #endif
 
-=======
-
-bool oled_task_kb(void) {
-    if ( IS_HOST_LED_OFF(USB_LED_NUM_LOCK) && IS_HOST_LED_OFF(USB_LED_CAPS_LOCK) && get_highest_layer(layer_state) == 0 ) {
-        render_name();
-        oled_set_cursor(0,3);
-        switch (keyboard_config.dpi_config) {   // { 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000 }
-            case 0:
-                oled_write_P(PSTR("      DPI: 400       "), false);
-                break;
-            case 1:
-                oled_write_P(PSTR("      DPI: 800       "), false);
-                break;
-            case 2:
-                oled_write_P(PSTR("      DPI: 1200      "), false);
-                break;
-            case 3:
-                oled_write_P(PSTR("      DPI: 1600      "), false);
-                break;
-            case 4:
-                oled_write_P(PSTR("      DPI: 2000      "), false);
-                break;
-            case 5:
-                oled_write_P(PSTR("      DPI: 2400      "), false);
-                break;
-            case 6:
-                oled_write_P(PSTR("      DPI: 2800      "), false);
-                break;
-            case 7:
-                oled_write_P(PSTR("      DPI: 3200      "), false);
-                break;
-            case 8:
-                oled_write_P(PSTR("      DPI: 3600      "), false);
-                break;
-            case 9:
-                oled_write_P(PSTR("      DPI: 4000      "), false);
-                break;
-            default:
-                oled_write_P(PSTR("      DPI: ????      "), false);    // Should never display, here as a catchall
-        }
-        clear_screen = true;
-    } else {
-        if (clear_screen == true) {
-            oled_clear();
-            oled_render();
-            clear_screen = false;
-        }
-        render_logo();
-        oled_set_cursor(8,2);
-        switch (get_highest_layer(layer_state)) {
-            case 0:
-                oled_write_P(PSTR("Layer 0"), false);
-                break;
-            case 1:
-                oled_write_P(PSTR("Layer 1"), false);
-                break;
-            case 2:
-                oled_write_P(PSTR("Layer 2"), false);
-                break;
-            case 3:
-                oled_write_P(PSTR("Layer 3"), false);
-                break;
-            default:
-                oled_write_P(PSTR("Layer ?"), false);    // Should never display, here as a catchall
-        }
-        led_t led_state = host_keyboard_led_state();
-        oled_set_cursor(8,0);
-        oled_write_P(led_state.scroll_lock ? PSTR("SCRLK") : PSTR("     "), false);
-        oled_set_cursor(8,1);
-        oled_write_P(led_state.num_lock ? PSTR("NLCK ") : PSTR("     "), false);
-        oled_write_P(led_state.caps_lock ? PSTR("CAPS ") : PSTR("     "), false);
-        oled_set_cursor(8,3);
-        switch (keyboard_config.dpi_config) {   // 512, 1024, 2048, 3072, 4096
-            case 0:
-                oled_write_P(PSTR("DPI: 400 "), false);
-                break;
-            case 1:
-                oled_write_P(PSTR("DPI: 800 "), false);
-                break;
-            case 2:
-                oled_write_P(PSTR("DPI: 1200"), false);
-                break;
-            case 3:
-                oled_write_P(PSTR("DPI: 1600"), false);
-                break;
-            case 4:
-                oled_write_P(PSTR("DPI: 2000"), false);
-                break;
-            case 5:
-                oled_write_P(PSTR("DPI: 2400"), false);
-                break;
-            case 6:
-                oled_write_P(PSTR("DPI: 2800"), false);
-                break;
-            case 7:
-                oled_write_P(PSTR("DPI: 3200"), false);
-                break;
-            case 8:
-                oled_write_P(PSTR("DPI: 3600"), false);
-                break;
-            case 9:
-                oled_write_P(PSTR("DPI: 4000"), false);
-                break;
-            default:
-                oled_write_P(PSTR("DPI: ????"), false);    // Should never display, here as a catchall
-        }
-    }
-    return false;
-}
-#endif
-
->>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
         case DPI_UP:
@@ -280,11 +170,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
                 pointing_device_set_cpi(dpi_array[0]);
             } else {
                 pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
-<<<<<<< HEAD
             }
-=======
-            }                
->>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
             return false;
     }
     return process_record_user(keycode, record);
@@ -297,11 +183,8 @@ void pointing_device_init_kb(void) {
 void eeconfig_init_kb(void) {
     keyboard_config.dpi_config = GLIDEPOINT_DPI_DEFAULT;
     eeconfig_update_kb(keyboard_config.raw);
-<<<<<<< HEAD
 
     eeconfig_init_user();
-=======
->>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890
 }
 
 void matrix_init_kb(void) {
@@ -316,18 +199,7 @@ void matrix_init_kb(void) {
 
 void keyboard_post_init_kb(void) {
     pointing_device_set_cpi(dpi_array[keyboard_config.dpi_config]);
-
     keyboard_post_init_user();
-<<<<<<< HEAD
-
     rgblight_toggle_noeeprom();     //double toggle post init removes the weirdness with rgb strips having a yellow first LED
     rgblight_toggle_noeeprom();
-
 }
-=======
-    
-    rgblight_toggle_noeeprom();     //double toggle post init removes the weirdness with rgb strips having a yellow first LED
-    rgblight_toggle_noeeprom();
-
-}
->>>>>>> 6dbff6351ea916e21bc7efe8fc45608da0d47890

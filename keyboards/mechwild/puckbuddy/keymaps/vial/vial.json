@@ -4,6 +4,33 @@
   "productId": "0x170F",
   "lighting": "qmk_rgblight",
   "matrix": { "rows": 4, "cols": 4 },
+  "customKeycodes": [
+  {
+    "name": "DPI+",
+    "title": "Increase the DPI of the touchpad.",
+    "shortName": "DPI_UP"
+  },
+  {
+    "name": "DPI-",
+    "title": "Decrease the DPI of the touchpad.",
+    "shortName": "DPI_DN"
+  },
+  {
+    "name": "FINE",
+    "title": "Temporarily lower the DPI to minimum while held.",
+    "shortName": "DPI_FINE"
+  },
+  {
+    "name": "TAP+",
+    "title": "Increase the tapping term.",
+    "shortname": "TAP_UP"
+  },
+  {
+    "name": "TAP-",
+    "title": "Decrease the tapping term.",
+    "shortname": "TAP_DN"
+  }
+  ],
   "layouts": {
     "keymap": [
 		["0,1\n\n\n\n\n\n\n\n\ne",{"x":6.5},"1,1\n\n\n\n\n\n\n\n\ne"],
@@ -16,6 +43,3 @@
     ]
   }
 }
-
-
-

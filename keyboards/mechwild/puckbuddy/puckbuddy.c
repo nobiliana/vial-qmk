@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "puckbuddy.h"
+#ifdef QMK_SETTINGS
+#include "qmk_settings.h"
+#endif
 
 #ifndef GLIDEPOINT_DPI_OPTIONS
 #    define GLIDEPOINT_DPI_OPTIONS \
@@ -17,6 +20,18 @@
 keyboard_config_t keyboard_config;
 uint16_t          dpi_array[] = GLIDEPOINT_DPI_OPTIONS;
 #define DPI_OPTION_SIZE (sizeof(dpi_array) / sizeof(uint16_t))
+
+#ifdef QMK_SETTINGS
+static void eeprom_settings_save(void) {
+    for (size_t i = 0; i < sizeof(qmk_settings_t); ++i) {
+        uint8_t old_byte, new_byte;
+        old_byte = dynamic_keymap_get_qmk_settings(i);
+        memcpy(&new_byte, (char*)&QS + i, 1);
+        if (old_byte != new_byte)
+            dynamic_keymap_set_qmk_settings(i, new_byte);
+    }
+}
+#endif
 
 void board_init(void) {
     // B9 is configured as I2C1_SDA in the board file; that function must be
@@ -110,11 +125,19 @@ bool oled_task_kb(void) {
 #endif
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
         oled_write_P(PSTR(" TAP:"), false);
-        if (g_tapping_term > 0) {
-            oled_write(get_u16_str(keyboard_config.dt_term_config, ' '), false);
+#ifdef QMK_SETTINGS
+        if (QS.tapping_term > 0) {
+            oled_write(get_u16_str(QS.tapping_term, ' '), false);
         } else {
             oled_write_P(PSTR("Off  "), false);
         }
+#else
+        if (g_tapping_term > 0) {
+            oled_write(get_u16_str(g_tapping_term, ' '), false);
+        } else {
+            oled_write_P(PSTR("Off  "), false);
+        }
+#endif
 #endif
         clear_screen = true;
     } else {
@@ -154,11 +177,19 @@ bool oled_task_kb(void) {
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
         oled_set_cursor(8,3);
         oled_write_P(PSTR("TAP:"), false);
+#ifdef QMK_SETTINGS
+        if (QS.tapping_term > 0) {
+            oled_write(get_u16_str(QS.tapping_term, ' '), false);
+        } else {
+            oled_write_P(PSTR("Off  "), false);
+        }
+#else
         if (g_tapping_term > 0) {
             oled_write(get_u16_str(keyboard_config.dt_term_config, ' '), false);
         } else {
             oled_write_P(PSTR("Off  "), false);
         }
+#endif
 #endif
         clear_screen_art = true;
     }
@@ -196,6 +227,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
             return false;
 #endif
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
+#ifdef QMK_SETTINGS
+        case TAP_UP:
+            if (record->event.pressed) {
+                QS.tapping_term += DYNAMIC_TAPPING_TERM_INCREMENT;
+                eeprom_settings_save();
+            }
+            return false;
+        case TAP_DN:
+            if (record->event.pressed) {
+                if (QS.tapping_term > 0) {
+                QS.tapping_term -= DYNAMIC_TAPPING_TERM_INCREMENT;
+                eeprom_settings_save();                }
+            }
+            return false;
+#else
         case TAP_UP:
             if (record->event.pressed) {
                 g_tapping_term += DYNAMIC_TAPPING_TERM_INCREMENT;
@@ -212,6 +258,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
                 }
             }
             return false;
+#endif
 #endif
     }
     return process_record_user(keycode, record);
@@ -254,7 +301,7 @@ void keyboard_post_init_kb(void) {
     rgblight_toggle_noeeprom();     //double toggle post init removes the weirdness with rgb strips having a yellow first LED
     rgblight_toggle_noeeprom();
 #endif
-#ifdef DYNAMIC_TAPPING_TERM_ENABLE
+#if (defined(DYNAMIC_TAPPING_TERM_ENABLE) && !defined(QMK_SETTINGS))
     g_tapping_term = keyboard_config.dt_term_config;
 #endif
     keyboard_post_init_user();

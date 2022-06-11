@@ -42,6 +42,7 @@
  * defining it this way allows us to easily modify it with DYNAMIC_TAPPING_TERM_ENABLE
  */
 #define TAPPING_TERM 0 
+#define CIRQUE_PINNACLE_ATTENUATION ADC_ATTENUATE_2X
 
 /*
  * Keyboard Matrix Assignments

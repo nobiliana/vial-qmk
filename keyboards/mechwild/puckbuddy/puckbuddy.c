@@ -21,8 +21,8 @@ keyboard_config_t keyboard_config;
 uint16_t          dpi_array[] = GLIDEPOINT_DPI_OPTIONS;
 #define DPI_OPTION_SIZE (sizeof(dpi_array) / sizeof(uint16_t))
 
-#ifdef QMK_SETTINGS
 static void eeprom_settings_save(void) {
+#ifdef QMK_SETTINGS
     for (size_t i = 0; i < sizeof(qmk_settings_t); ++i) {
         uint8_t old_byte, new_byte;
         old_byte = dynamic_keymap_get_qmk_settings(i);
@@ -30,8 +30,19 @@ static void eeprom_settings_save(void) {
         if (old_byte != new_byte)
             dynamic_keymap_set_qmk_settings(i, new_byte);
     }
-}
+#else
+    eeconfig_update_kb(keyboard_config.raw);
 #endif
+}
+
+static void update_tap_settings(void) {
+#ifdef QMK_SETTINGS
+    QS.tapping_term = keyboard_config.dt_term_config  * keyboard_config.tap_enabled_config;
+#else
+    g_tapping_term = keyboard_config.dt_term_config  * keyboard_config.tap_enabled_config;
+#endif
+    eeprom_settings_save();
+}
 
 void board_init(void) {
     // B9 is configured as I2C1_SDA in the board file; that function must be
@@ -83,8 +94,8 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 bool clear_screen = false;          // used to manage singular screen clears to prevent display glitch
 bool clear_screen_art = false;      // used to manage singular screen clears to prevent display glitch
 static void render_name(void) {     // Render Puckbuddy "Get Puck'd" text
-    static const char PROGMEM name_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92};
-    static const char PROGMEM name_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2};
+    static const char PROGMEM name_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x00};
+    static const char PROGMEM name_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0x00};
     static const char PROGMEM name_3[] = {0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xB6, 0xB6, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0x00};
     oled_set_cursor(0,0);
     oled_write_P(name_1, false);
@@ -125,19 +136,15 @@ bool oled_task_kb(void) {
 #endif
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
         oled_write_P(PSTR(" TAP:"), false);
+        if (keyboard_config.tap_enabled_config == false) {
+            oled_write_P(PSTR("Off  "), false);
+        } else {
 #ifdef QMK_SETTINGS
-        if (QS.tapping_term > 0) {
             oled_write(get_u16_str(QS.tapping_term, ' '), false);
-        } else {
-            oled_write_P(PSTR("Off  "), false);
-        }
 #else
-        if (g_tapping_term > 0) {
             oled_write(get_u16_str(g_tapping_term, ' '), false);
-        } else {
-            oled_write_P(PSTR("Off  "), false);
-        }
 #endif
+        }
 #endif
         clear_screen = true;
     } else {
@@ -177,19 +184,15 @@ bool oled_task_kb(void) {
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
         oled_set_cursor(8,3);
         oled_write_P(PSTR("TAP:"), false);
+        if (keyboard_config.tap_enabled_config == false) {
+            oled_write_P(PSTR("Off  "), false);
+        } else {
 #ifdef QMK_SETTINGS
-        if (QS.tapping_term > 0) {
             oled_write(get_u16_str(QS.tapping_term, ' '), false);
-        } else {
-            oled_write_P(PSTR("Off  "), false);
-        }
 #else
-        if (g_tapping_term > 0) {
-            oled_write(get_u16_str(keyboard_config.dt_term_config, ' '), false);
-        } else {
-            oled_write_P(PSTR("Off  "), false);
-        }
+            oled_write(get_u16_str(g_tapping_term, ' '), false);
 #endif
+        }
 #endif
         clear_screen_art = true;
     }
@@ -227,38 +230,36 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
             return false;
 #endif
 #ifdef DYNAMIC_TAPPING_TERM_ENABLE
-#ifdef QMK_SETTINGS
         case TAP_UP:
-            if (record->event.pressed) {
-                QS.tapping_term += DYNAMIC_TAPPING_TERM_INCREMENT;
-                eeprom_settings_save();
+            if (record->event.pressed && keyboard_config.tap_enabled_config != false) {
+                keyboard_config.dt_term_config += DYNAMIC_TAPPING_TERM_INCREMENT;
+                update_tap_settings();
             }
             return false;
         case TAP_DN:
-            if (record->event.pressed) {
-                if (QS.tapping_term > 0) {
-                QS.tapping_term -= DYNAMIC_TAPPING_TERM_INCREMENT;
-                eeprom_settings_save();                }
+            if (record->event.pressed && keyboard_config.dt_term_config > 0 && keyboard_config.tap_enabled_config != false) {
+                    keyboard_config.dt_term_config -= DYNAMIC_TAPPING_TERM_INCREMENT;
+                    update_tap_settings();
             }
             return false;
-#else
-        case TAP_UP:
+        case TAP_ON:
             if (record->event.pressed) {
-                g_tapping_term += DYNAMIC_TAPPING_TERM_INCREMENT;
-                keyboard_config.dt_term_config = g_tapping_term;
-                eeconfig_update_kb(keyboard_config.raw);
+                keyboard_config.tap_enabled_config = true;
+                update_tap_settings();
             }
             return false;
-        case TAP_DN:
+        case TAP_OFF:
             if (record->event.pressed) {
-                if (g_tapping_term > 0) {
-                    g_tapping_term -= DYNAMIC_TAPPING_TERM_INCREMENT;
-                    keyboard_config.dt_term_config = g_tapping_term;
-                    eeconfig_update_kb(keyboard_config.raw);
-                }
+                keyboard_config.tap_enabled_config = false;
+                update_tap_settings();
+            }
+            return false;        
+        case TAP_TOG:
+            if (record->event.pressed) {
+                keyboard_config.tap_enabled_config ^= 1;
+                update_tap_settings();
             }
             return false;
-#endif
 #endif
     }
     return process_record_user(keycode, record);

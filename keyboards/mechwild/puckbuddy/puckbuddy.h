@@ -32,6 +32,7 @@ typedef union {
     struct {
         uint8_t dpi_config;
         uint16_t dt_term_config;
+        bool tap_enabled_config;
     };
 } keyboard_config_t;
 
@@ -39,7 +40,7 @@ extern keyboard_config_t keyboard_config;
 extern uint16_t          dpi_array[];
 
 enum keyboard_keycodes {
-#ifdef VIA_ENABLE
+#ifdef VIAL_ENABLE
     DPI_UP = USER00,
 #else
     DPI_UP = SAFE_RANGE,
@@ -48,5 +49,8 @@ enum keyboard_keycodes {
     DPI_FINE,
     TAP_UP,
     TAP_DN,
+    TAP_ON,
+    TAP_OFF,
+    TAP_TOG,
     NEW_SAFE_RANGE
 };

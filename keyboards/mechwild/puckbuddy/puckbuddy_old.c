@@ -45,7 +45,9 @@ void tap_modify(int change_value, bool tap_status) {
     if (keyboard_config.dt_term_config < 0) {
         keyboard_config.dt_term_config *= -1;
     }
+
     keyboard_config.dt_term_config += change_value;
+
     if (tap_status == false ) {
         keyboard_config.dt_term_config *= -1;
 #ifdef QMK_SETTINGS
@@ -123,8 +125,8 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_180;       // flips the display 180 degrees
 }
 
-bool clear_screen = true;           // used to manage singular screen clears to prevent display glitch
-bool clear_screen_art = true;       // used to manage singular screen clears to prevent display glitch
+bool clear_screen = true;          // used to manage singular screen clears to prevent display glitch
+bool clear_screen_art = true;      // used to manage singular screen clears to prevent display glitch
 static void render_name(void) {     // Render Puckbuddy "Get Puck'd" text
     static const char PROGMEM name_1[] = {0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0xB6, 0xB6, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x00};
     static const char PROGMEM name_2[] = {0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xB6, 0xB6, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0x00};
@@ -135,7 +137,7 @@ static void render_name(void) {     // Render Puckbuddy "Get Puck'd" text
     oled_write_P(name_2, false);
     oled_set_cursor(0,2);
     oled_write_P(name_3, false);
-}
+}    
 
 static void render_logo(void) {     // Render MechWild "MW" Logo
     static const char PROGMEM logo_1[] = {0x97, 0x98, 0x99, 0x9A,0x00};

@@ -21,7 +21,6 @@
 #define EXTERNAL_EEPROM_PAGE_SIZE 128
 #define EXTERNAL_EEPROM_ADDRESS_SIZE 1
 #define EXTERNAL_EEPROM_WRITE_TIME 0
-
 #define FEE_PAGE_BASE_ADDRESS 0x08008000
 #endif
 
@@ -38,10 +37,10 @@
 /* set the tapping term for glidepoint pad to register a tap click */
 //#define CIRQUE_PINNACLE_TAPPING_TERM 0 // This is set to 0 to disable it
 
-/* TAPPING_TERM value is used for the CIRQUE_PINNACLE_TAPPING_TERM as well by default 
+/* TAPPING_TERM value is used for the CIRQUE_PINNACLE_TAPPING_TERM as well by default
  * defining it this way allows us to easily modify it with DYNAMIC_TAPPING_TERM_ENABLE
  */
-#define TAPPING_TERM 0 
+#define TAPPING_TERM 0
 #define CIRQUE_PINNACLE_ATTENUATION ADC_ATTENUATE_2X
 
 /*

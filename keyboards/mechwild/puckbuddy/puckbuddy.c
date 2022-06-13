@@ -56,6 +56,9 @@ void tap_modify(int change_value, bool tap_status) {
         keyboard_config.dt_term_config *= -1;
     }
     keyboard_config.dt_term_config += change_value;
+    if (keyboard_config.dt_term_config < 0) {
+        keyboard_config.dt_term_config = 0;
+    }
     if (tap_status == false ) {
         keyboard_config.dt_term_config *= -1;
 #ifdef QMK_SETTINGS

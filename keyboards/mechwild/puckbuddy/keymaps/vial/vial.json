@@ -29,6 +29,21 @@
     "name": "TAP-",
     "title": "Decrease the tapping term.",
     "shortname": "TAP_DN"
+  },
+  {
+    "name": "TAP_ON",
+    "title": "Tap clicking on.",
+    "shortname": "TAP_ON"
+  },
+  {
+    "name": "TP_OFF",
+    "title": "Tap clicking off.",
+    "shortname": "TAP_OFF"
+  },
+  {
+    "name": "TP_TG",
+    "title": "Toggle tap clicking being on or off.",
+    "shortname": "TAP_TOG"
   }
   ],
   "layouts": {

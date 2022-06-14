@@ -95,6 +95,9 @@ static void render_logo(void) {     // Render MechWild "MW" Logo
 }
 
 bool oled_task_kb(void) {
+    if(!oled_task_user()) {
+        return false;
+    }
     if ( IS_HOST_LED_OFF(USB_LED_NUM_LOCK) && IS_HOST_LED_OFF(USB_LED_CAPS_LOCK) && IS_HOST_LED_OFF(USB_LED_SCROLL_LOCK) && get_highest_layer(layer_state) == 0 ) {
         if (clear_screen_art == true) {
             oled_clear();
@@ -162,7 +165,7 @@ bool oled_task_kb(void) {
 #endif
         clear_screen_art = true;
     }
-    return false;
+    return true;
 }
 #endif
 

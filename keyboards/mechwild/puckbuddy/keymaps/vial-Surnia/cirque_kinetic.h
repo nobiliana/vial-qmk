@@ -12,6 +12,14 @@ int8_t frictionMultiplier = 1;
 #      define friction 0.35;
 #endif
 
+float xVal = 0; //will be int in the final op, currently a test value. Will be equal to x delta.
+float yVal = 0; //will be int in the final op, currently a test value. Will be equal to y delta. 
+
+
+bool LIFTOFF = TRUE; //False being contact, True being finger off. 
+bool kineticInit = TRUE; //variable to initialize the kinetic values before start. "inverted" to make logic more visually correct
+
+
 typedef struct {
     int xPoint;
     int yPoint;
@@ -22,3 +30,4 @@ typedef struct {
 //Function Declarations
 float kineticDrag (float vecAngle, float vecMagn);
 void kineticVector (int xMouse, int yMouse);
+void kineticCirque (void);

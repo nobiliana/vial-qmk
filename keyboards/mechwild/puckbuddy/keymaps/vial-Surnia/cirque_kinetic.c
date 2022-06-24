@@ -55,7 +55,7 @@ void kineticVector (int xMouse, int yMouse){
 
 
 
-int kineticCirque()
+void kineticCirque(void)
 {   
     if (LIFTOFF){ 
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 

@@ -35,8 +35,7 @@ enum layer_names {
 
 enum Surnia_keycodes {
     kineticBrake = SAFE_RANGE,
-    kineticGlide,
-    NEW_SAFE_RANGE
+    kineticGlide
 };
 
 bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
@@ -58,22 +57,33 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
             return false;
         #endif
     }
+    return process_record_user(keycode, record);
 }
 
-#ifdef POINTING_DEVICE_ENABLE
-    if (touchData.zValue){//records last mouse input prior to liftoff. 
-        xVal = mouse_report->x;
-        yVal = mouse_report_>y;
-        LIFTOFF = FALSE;
-    } else if (!touchData.zValue) {
-        LIFTOFF = TRUE;
-    }
+static void pointing_device_task_Surnia(report_mouse_t* mouse_report) {
+    #ifdef POINTING_DEVICE_ENABLE
+        if (is_z_down){//records last mouse input prior to liftoff. 
+            xVal = mouse_report->x;
+            yVal = mouse_report->y;
+            LIFTOFF = FALSE;
+        } else if (!is_z_down) {
+            LIFTOFF = TRUE;
+        }
+        kineticCirque();
+    #endif
+}
 
-#endif
+report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+    if (is_keyboard_master()) {
+        pointing_device_task_Surnia(&mouse_report);
+        mouse_report = pointing_device_task_user(mouse_report);
+    }
+    return mouse_report;
+}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(
-    KC_MUTE,  MO(_FN3), MO(_FN2), FINE,           MO(_FN1),
+    KC_MUTE,  MO(_FN3), MO(_FN2), DPI_FINE,      MO(_FN1),
     KC_WFWD,                                     KC_BTN3,
     KC_WBAK,                                     KC_BTN2,
     KC_ENTER, KC_BTN1, KC_BTN2, KC_BTN2, KC_BTN1, DPI_FINE

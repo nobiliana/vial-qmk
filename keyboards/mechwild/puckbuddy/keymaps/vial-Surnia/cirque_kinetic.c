@@ -16,13 +16,7 @@ const float rad2deg = 180/PI;
 int8_t frictionMultiplier = 1;
 
 
-//Take Final delta values pre-liftoff, apply kinetic. May need to pull LAST deltas, as liftoff detection may occur at same time of x/y wipe. 
-float xVal = 0; //will be int in the final op, currently a test value. Will be equal to x delta.
-float yVal = 0; //will be int in the final op, currently a test value. Will be equal to y delta. 
 
-
-bool LIFTOFF = TRUE; //False being contact, True being finger off. 
-bool kineticInit = TRUE; //variable to initialize the kinetic values before start. "inverted" to make logic more visually correct
 
 typedef struct {
     int xPoint;
@@ -55,8 +49,7 @@ void kineticVector (int xMouse, int yMouse){
 
 
 
-void kineticCirque(void)
-{   
+void kineticCirque(void){   
     if (LIFTOFF){ 
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
             kineticVector(xVal, yVal); //will take deltaX and deltaY from drivers, and calculate into the xPoint and yPoints.

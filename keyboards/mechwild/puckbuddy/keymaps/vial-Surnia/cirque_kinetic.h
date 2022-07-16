@@ -12,6 +12,7 @@ int8_t frictionMultiplier = 1;
 #      define friction 0.35;
 #endif
 
+//Take Final delta values pre-liftoff, apply kinetic. May need to pull LAST deltas, as liftoff detection may occur at same time of x/y wipe. 
 float xVal = 0; //will be int in the final op, currently a test value. Will be equal to x delta.
 float yVal = 0; //will be int in the final op, currently a test value. Will be equal to y delta. 
 

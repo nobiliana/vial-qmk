@@ -38,7 +38,7 @@ enum Surnia_keycodes {
     kineticGlide
 };
 
-bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
         #ifdef POINTING_DEVICE_ENABLE
             case kineticBrake:
@@ -56,30 +56,34 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
                 }
             return false;
         #endif
+        default: 
+            return true;
     }
-    return process_record_user(keycode, record);
 }
 
 static void pointing_device_task_Surnia(report_mouse_t* mouse_report) {
     #ifdef POINTING_DEVICE_ENABLE
-        if (is_z_down){//records last mouse input prior to liftoff. 
+    pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
+        if (cirqueData.zValue){//records last mouse input prior to liftoff. 
             xVal = mouse_report->x;
             yVal = mouse_report->y;
             LIFTOFF = FALSE;
-        } else if (!is_z_down) {
+        } else if (!cirqueData.zValue) {
             LIFTOFF = TRUE;
         }
         kineticCirque();
     #endif
 }
 
-report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (is_keyboard_master()) {
         pointing_device_task_Surnia(&mouse_report);
         mouse_report = pointing_device_task_user(mouse_report);
     }
     return mouse_report;
 }
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(

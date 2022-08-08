@@ -1,4 +1,5 @@
 // Copyright 2022 Kyle McCreery (@kylemccreery)
+// Copyright 2022 Surnia/nobiliana
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
@@ -61,19 +62,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     }
 }
 
-static void pointing_device_task_Surnia(report_mouse_t* mouse_report) {
-    #ifdef POINTING_DEVICE_ENABLE
-    pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
-        if (cirqueData.zValue){//records last mouse input prior to liftoff. 
-            xVal = mouse_report->x;
-            yVal = mouse_report->y;
-            LIFTOFF = FALSE;
-        } else if (!cirqueData.zValue) {
-            LIFTOFF = TRUE;
-        }
-        kineticCirque();
-    #endif
-}
+#ifdef POINTING_DEVICE_ENABLE
+    static void pointing_device_task_Surnia(report_mouse_t* mouse_report) {
+        pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
+            if (cirqueData.zValue){//records last mouse input prior to liftoff. 
+                xVal = mouse_report->x;
+                yVal = mouse_report->y;
+                LIFTOFF = FALSE;
+            } else if (!cirqueData.zValue) {
+                LIFTOFF = TRUE;
+            }
+            kineticCirque();
+    }
+#endif
 
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {

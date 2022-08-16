@@ -68,11 +68,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             if (cirqueData.zValue){//records last mouse input prior to liftoff. 
                 xVal = mouse_report->x;
                 yVal = mouse_report->y;
-                LIFTOFF = FALSE;
+                LIFTOFF = 0;
             } else if (!cirqueData.zValue) {
-                LIFTOFF = TRUE;
+                LIFTOFF = 1;
             }
-            kineticCirque();
+            kineticCirque(mouse_report->x, mouse_report->y);
     }
 #endif
 

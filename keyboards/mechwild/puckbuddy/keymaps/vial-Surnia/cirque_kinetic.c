@@ -9,22 +9,8 @@ add functionality for friction modifiers and keys, high and low friction to allo
 #include <math.h>
 #include "cirque_kinetic.h"
 
-//friction, needs grav constant. a = gu
-const float grav = 9.82;
-const float PI = 3.14159;
-const float rad2deg = 180/PI;
-int8_t frictionMultiplier = 1;
 
-
-
-
-typedef struct {
-    int xPoint;
-    int yPoint;
-    float magValue;
-    float angValue;
-
-} mouseThings;
+extern struct pinnacle_data_t cirqueData;
 
 mouseThings mVector = {0};
 
@@ -41,7 +27,7 @@ float kineticDrag (float vecAngle, float vecMagn){
 }
 
 //inputs to this should be x and y vectors!
-void kineticVector (int xMouse, int yMouse){
+void kineticVector (int8_t xMouse, int8_t yMouse){
     //setting vector magnitude and angle
     mVector.magValue = sqrt((xMouse*xMouse)+(yMouse*yMouse));
     mVector.angValue = atan2(yMouse, xMouse);
@@ -49,19 +35,19 @@ void kineticVector (int xMouse, int yMouse){
 
 
 
-void kineticCirque(void){   
+void kineticCirque(int8_t xPass, int8_t yPass){   
     if (LIFTOFF){ 
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
             kineticVector(xVal, yVal); //will take deltaX and deltaY from drivers, and calculate into the xPoint and yPoints.
-            kineticInit = FALSE;
+            kineticInit = 0;
         }
 
         if (mVector.magValue > 0){
             //printf("loop entered. logic to follow. \n");            
                 mVector.magValue = kineticDrag(mVector.angValue, mVector.magValue);
 
-                mouse_report->x = mVector.xPoint;
-                mouse_report->y = mVector.yPoint;
+                xPass = mVector.xPoint;
+                yPass = mVector.yPoint;
                 /*
                 BREAKOUT POSITION FOR TAKING XPOINT AND YPOINT TO FIRMWARE POINTER CODE. GUARDS IN PLACE FOR NEGATIVE MAGNITUDES.
                 */
@@ -69,9 +55,9 @@ void kineticCirque(void){
     } else if (!LIFTOFF){
         if (!kineticInit){
             kineticVector(0, 0); //reinitialize to zero. ensure we have no residual data. 
-            kineticInit = TRUE; //if finger is touching, reset init lock. 
+            kineticInit = 1; //if finger is touching, reset init lock. 
         }
     }
     
-    return 0;
+//    return 0;
 }

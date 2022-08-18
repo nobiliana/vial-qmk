@@ -9,6 +9,8 @@ add functionality for friction modifiers and keys, high and low friction to allo
 #include <math.h>
 #include "cirque_kinetic.h"
 
+#include "print.h"
+
 
 extern struct pinnacle_data_t cirqueData;
 

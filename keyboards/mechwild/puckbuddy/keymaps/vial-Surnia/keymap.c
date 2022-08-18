@@ -3,7 +3,15 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
-#include "cirque_kinetic.h"
+//#include "cirque_kinetic.h"
+extern float xVal, yVal;
+extern int8_t LIFTOFF; 
+extern int8_t frictionMultiplier;
+extern void kineticCirque(int8_t xPass, int8_t yPass);
+
+//debug sector
+#include "print.h"
+
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -72,6 +80,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             } else if (!cirqueData.zValue) {
                 LIFTOFF = 1;
             }
+            uprintf("xVal: %f, yVal: %f, Liftoff: %f\n", xVal, yVal, LIFTOFF);
             kineticCirque(mouse_report->x, mouse_report->y);
     }
 #endif
@@ -80,7 +89,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (is_keyboard_master()) {
         pointing_device_task_Surnia(&mouse_report);
-        mouse_report = pointing_device_task_user(mouse_report);
+        //mouse_report = pointing_device_task_user(mouse_report);
     }
     return mouse_report;
 }

@@ -70,6 +70,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     }
 }
 
+/*
 #ifdef POINTING_DEVICE_ENABLE
     static void pointing_device_task_Surnia(report_mouse_t* mouse_report) {
         pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
@@ -84,35 +85,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             kineticCirque(mouse_report->x, mouse_report->y);
     }
 #endif
-
+*/
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    /*
     if (is_keyboard_master()) {
         pointing_device_task_Surnia(&mouse_report);
         //mouse_report = pointing_device_task_user(mouse_report);
     }
+    */
+        pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
+            if (cirqueData.zValue){//records last mouse input prior to liftoff. 
+                xVal = mouse_report.x;
+                yVal = mouse_report.y;
+                LIFTOFF = 0;
+            } else if (!cirqueData.zValue) {
+                LIFTOFF = 1;
+            }
+            uprintf("xVal: %f, yVal: %f, Liftoff: %f\n", xVal, yVal, LIFTOFF);
+            kineticCirque(mouse_report.x, mouse_report.y);
     return mouse_report;
 }
 
+#ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if index == 0 {
+    switch (index) {
+    case 0:
         if (clockwise) {
-            tap_code(KC_VOLU);
+            tap_code(KC_DOWN);
         } else {
-            tap_code(KC_VOLD);
+            tap_code(KC_UP);
         }
-    } else if ( index == 1) {
+        break;
+    case 1:
         if (clockwise) {
             tap_code(KC_WH_D);
         } else {
             tap_code(KC_WH_U);
         }
+    break;
     }
+    return false;
 }
+#endif
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(
-    KC_MUTE,  MO(_FN3), MO(_FN2), DPI_FINE,      MO(_FN1),
+    KC_MUTE,  MO(_FN3), MO(_FN2), MO(_FN1),      MO(_FN1),
     KC_WFWD,                                     KC_BTN3,
     KC_WBAK,                                     KC_BTN2,
     KC_ENTER, KC_BTN1, KC_BTN2, KC_BTN2, KC_BTN1, DPI_FINE

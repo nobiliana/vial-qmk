@@ -10,11 +10,11 @@
 #    define GLIDEPOINT_DPI_OPTIONS \
         { 400, 800, 1200, 1400, 1600, 2000, 2400, 2800, 3200, 4000 }
 #    ifndef GLIDEPOINT_DPI_DEFAULT
-#        define GLIDEPOINT_DPI_DEFAULT 1
+#        define GLIDEPOINT_DPI_DEFAULT 3
 #    endif
 #endif
 #ifndef GLIDEPOINT_DPI_DEFAULT
-#    define GLIDEPOINT_DPI_DEFAULT 1
+#    define GLIDEPOINT_DPI_DEFAULT 3
 #endif
 
 keyboard_config_t keyboard_config;
@@ -108,6 +108,7 @@ bool dip_switch_update_kb(uint8_t index, bool active) {
 }
 #endif
 
+/*
 #ifdef ENCODER_ENABLE
 bool encoder_update_kb(uint8_t index, bool clockwise) {
     if (!encoder_update_user(index, clockwise)) { return false; }
@@ -130,6 +131,7 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     return true;
 }
 #endif
+*/
 
 #ifdef OLED_ENABLE   // OLED Functionality
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {

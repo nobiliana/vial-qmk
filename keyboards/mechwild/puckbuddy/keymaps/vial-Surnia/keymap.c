@@ -7,11 +7,12 @@
 extern float xVal, yVal;
 extern int8_t LIFTOFF; 
 extern int8_t frictionMultiplier;
-extern void kineticCirque(int8_t xPass, int8_t yPass);
+extern void kineticCirque(report_mouse_t *mouse_report);
 
 //debug sector
 #include "print.h"
 
+#define friction 0.35
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -46,6 +47,15 @@ enum Surnia_keycodes {
     kineticBrake = SAFE_RANGE,
     kineticGlide
 };
+
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_enable=true;
+  debug_matrix=true;
+  debug_keyboard=true;
+  debug_mouse=true;
+}
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
@@ -96,14 +106,21 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     */
         pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
             if (cirqueData.zValue){//records last mouse input prior to liftoff. 
-                xVal = mouse_report.x;
-                yVal = mouse_report.y;
+                if (cirqueData.xValue !=0){
+                    xVal = cirqueData.xValue;
+                }
+                if (cirqueData.yValue !=0){
+                    yVal = cirqueData.yValue;
+                }
                 LIFTOFF = 0;
+                uprintf("xVal: %i, yVal: %i, Liftoff: %i || mouse x: %i, mouse: y %i\n", xVal, yVal, LIFTOFF, mouse_report.x, mouse_report.y);
             } else if (!cirqueData.zValue) {
                 LIFTOFF = 1;
+                uprintf("lift detected!: %i, xVal: %i, yVal %i\n", LIFTOFF, xVal, yVal);
             }
-            uprintf("xVal: %f, yVal: %f, Liftoff: %f\n", xVal, yVal, LIFTOFF);
-            kineticCirque(mouse_report.x, mouse_report.y);
+            
+
+            kineticCirque(&mouse_report);
     return mouse_report;
 }
 

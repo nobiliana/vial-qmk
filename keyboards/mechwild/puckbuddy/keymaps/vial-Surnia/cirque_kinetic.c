@@ -8,6 +8,7 @@ add functionality for friction modifiers and keys, high and low friction to allo
 #include <stdio.h>
 #include <math.h>
 #include "cirque_kinetic.h"
+#include "report.h"
 
 #include "print.h"
 
@@ -18,7 +19,7 @@ mouseThings mVector = {0};
 
 //friction function
 float kineticDrag (float vecAngle, float vecMagn){
-    if (vecMagn - grav*friction*frictionMultiplier <=0){
+    if (vecMagn - grav*friction*frictionMultiplier <=0){ //if magnitude of the vector is less than zero after calculation, zero it out. 
         mVector.xPoint = 0;
         mVector.yPoint = 0;
     } else {
@@ -37,7 +38,7 @@ void kineticVector (int8_t xMouse, int8_t yMouse){
 
 
 
-void kineticCirque(int8_t xPass, int8_t yPass){   
+void kineticCirque(report_mouse_t *mouse_report){   
     if (LIFTOFF){ 
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
             kineticVector(xVal, yVal); //will take deltaX and deltaY from drivers, and calculate into the xPoint and yPoints.
@@ -48,12 +49,12 @@ void kineticCirque(int8_t xPass, int8_t yPass){
             //printf("loop entered. logic to follow. \n");            
                 mVector.magValue = kineticDrag(mVector.angValue, mVector.magValue);
 
-                xPass = mVector.xPoint;
-                yPass = mVector.yPoint;
+                mouse_report->x = mVector.xPoint;
+                mouse_report->y = mVector.yPoint;
                 /*
                 BREAKOUT POSITION FOR TAKING XPOINT AND YPOINT TO FIRMWARE POINTER CODE. GUARDS IN PLACE FOR NEGATIVE MAGNITUDES.
                 */
-        } 
+        }
     } else if (!LIFTOFF){
         if (!kineticInit){
             kineticVector(0, 0); //reinitialize to zero. ensure we have no residual data. 
@@ -61,5 +62,5 @@ void kineticCirque(int8_t xPass, int8_t yPass){
         }
     }
     
-//    return 0;
+//    return Pass;
 }

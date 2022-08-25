@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "report.h"
 
 //friction, needs grav constant. a = gu
 const float grav = 9.82;
@@ -25,8 +26,8 @@ int8_t kineticInit = 1; //variable to initialize the kinetic values before start
 
 
 typedef struct {
-    int8_t xPoint;
-    int8_t yPoint;
+    int16_t xPoint;
+    int16_t yPoint;
     float magValue;
     float angValue;
 } mouseThings;
@@ -34,4 +35,4 @@ typedef struct {
 //Function Declarations
 float kineticDrag (float vecAngle, float vecMagn);
 void kineticVector (int8_t xMouse, int8_t yMouse);
-void kineticCirque (int8_t xPass, int8_t yPass);
+void kineticCirque (report_mouse_t *mouse_report);

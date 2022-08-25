@@ -8,4 +8,9 @@ LTO_ENABLE = yes
 
 SRC += cirque_kinetic.c
 
-CONSOLE_ENABLE = true
+CONSOLE_ENABLE = yes
+MIDI_ENABLE = no
+NKRO_ENABLE = no
+STENO_ENABLE = no
+EXTRAKEY_ENABLE = no
+KEYBOARD_SHARED_EP = yes

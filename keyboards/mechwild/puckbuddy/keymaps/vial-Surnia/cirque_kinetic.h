@@ -30,6 +30,10 @@ typedef struct {
     int16_t yPoint;
     float magValue;
     float angValue;
+    int16_t xTemp;
+    int16_t yTemp;
+    int16_t xDel;
+    int16_t yDel;
 } mouseThings;
 
 //Function Declarations

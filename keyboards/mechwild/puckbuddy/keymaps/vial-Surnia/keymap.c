@@ -9,10 +9,12 @@ extern int8_t LIFTOFF;
 extern int8_t frictionMultiplier;
 extern void kineticCirque(report_mouse_t *mouse_report);
 
+#include "drivers/sensors/cirque_pinnacle.h"
+
 //debug sector
 #include "print.h"
 
-#define friction 0.35
+#define friction 0.21
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -69,7 +71,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
             case kineticGlide:
                 if (record->event.pressed) {
-                    frictionMultiplier = 0.2;
+                    frictionMultiplier = 0.42;
                 } else {
                     frictionMultiplier = 1;
                 }
@@ -105,18 +107,19 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     }
     */
         pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
+//        uprintf("x: %i, y: %i, z: %i\n", cirqueData.xValue, cirqueData.yValue, cirqueData.zValue);
+        cirque_pinnacle_scale_data(&cirqueData, cirque_pinnacle_get_scale(), cirque_pinnacle_get_scale());
+//        uprintf("x: %i, y: %i, z: %i\n", cirqueData.xValue, cirqueData.yValue, cirqueData.zValue);
             if (cirqueData.zValue){//records last mouse input prior to liftoff. 
-                if (cirqueData.xValue !=0){
+                if (cirqueData.xValue !=0 || cirqueData.yValue !=0){
                     xVal = cirqueData.xValue;
-                }
-                if (cirqueData.yValue !=0){
                     yVal = cirqueData.yValue;
                 }
                 LIFTOFF = 0;
-                uprintf("xVal: %i, yVal: %i, Liftoff: %i || mouse x: %i, mouse: y %i\n", xVal, yVal, LIFTOFF, mouse_report.x, mouse_report.y);
+                //uprintf("xVal: %i, yVal: %i, Liftoff: %i || mouse x: %i, mouse: y %i\n", xVal, yVal, LIFTOFF, mouse_report.x, mouse_report.y);
             } else if (!cirqueData.zValue) {
                 LIFTOFF = 1;
-                uprintf("lift detected!: %i, xVal: %i, yVal %i\n", LIFTOFF, xVal, yVal);
+                //uprintf("lift detected!: %i, xVal: %i, yVal %i\n", LIFTOFF, xVal, yVal);
             }
             
 

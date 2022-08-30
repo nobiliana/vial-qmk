@@ -26,7 +26,7 @@ float kineticDrag (float vecAngle, float vecMagn){
         mVector.xPoint = cos(vecAngle)*vecMagn; //apply floor to the calculation for final int. 
         mVector.yPoint = sin(vecAngle)*vecMagn; //apply floor to the calculation for final int. 
     }
-    return vecMagn - grav*friction;
+    return vecMagn - grav*friction*frictionMultiplier;
 }
 
 //inputs to this should be x and y vectors!
@@ -39,10 +39,19 @@ void kineticVector (int8_t xMouse, int8_t yMouse){
 
 
 void kineticCirque(report_mouse_t *mouse_report){   
+    if(mVector.xTemp != xVal || mVector.yTemp != yVal){ //if there is a change in position, update delta. otherwise ignore. prevents zeroing deltas. 
+    mVector.xDel = xVal - mVector.xTemp;
+    mVector.yDel = yVal - mVector.yTemp; //since xVal is absolute position, convert to change in co ords
+
+    mVector.xTemp = xVal;
+    mVector.yTemp = yVal; //update temp values to curent position
+    }
+
     if (LIFTOFF){ 
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
-            kineticVector(xVal, yVal); //will take deltaX and deltaY from drivers, and calculate into the xPoint and yPoints.
+            kineticVector(mVector.xDel, mVector.yDel); //will take deltaX and deltaY, and calculate into the xPoint and yPoints.
             kineticInit = 0;
+            uprintf("init. xDel: %i, yDel: %i. friction*1000: %i \n", mVector.xDel, mVector.yDel, frictionMultiplier*friction*1000);
         }
 
         if (mVector.magValue > 0){
@@ -54,6 +63,7 @@ void kineticCirque(report_mouse_t *mouse_report){
                 /*
                 BREAKOUT POSITION FOR TAKING XPOINT AND YPOINT TO FIRMWARE POINTER CODE. GUARDS IN PLACE FOR NEGATIVE MAGNITUDES.
                 */
+               uprintf("Kinetic. vect.x: %d, vect.y: %d || mouse x: %i, mouse y: %i\n", mVector.xPoint, mVector.yPoint, mouse_report->x, mouse_report->y);
         }
     } else if (!LIFTOFF){
         if (!kineticInit){

@@ -19,18 +19,18 @@ mouseThings mVector = {0};
 
 //friction function
 float kineticDrag (float vecAngle, float vecMagn){
-    if (vecMagn - grav*friction*frictionMultiplier <=0){ //if magnitude of the vector is less than zero after calculation, zero it out. 
+    if (vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100)) <=0){ //if magnitude of the vector is less than zero after calculation, zero it out. 
         mVector.xPoint = 0;
         mVector.yPoint = 0;
     } else {
-        mVector.xPoint = cos(vecAngle)*vecMagn; //apply floor to the calculation for final int. 
-        mVector.yPoint = sin(vecAngle)*vecMagn; //apply floor to the calculation for final int. 
+        mVector.xPoint = cos(vecAngle)*vecMagn; //pull decimal precision down, to final values
+        mVector.yPoint = sin(vecAngle)*vecMagn; //pull decimal precision down, to final values 
     }
-    return vecMagn - grav*friction*frictionMultiplier;
+    return vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100));
 }
 
 //inputs to this should be x and y vectors!
-void kineticVector (int8_t xMouse, int8_t yMouse){
+void kineticVector (int32_t xMouse, int32_t yMouse){
     //setting vector magnitude and angle
     mVector.magValue = sqrt((xMouse*xMouse)+(yMouse*yMouse));
     mVector.angValue = atan2(yMouse, xMouse);
@@ -51,7 +51,7 @@ void kineticCirque(report_mouse_t *mouse_report){
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
             kineticVector(mVector.xDel, mVector.yDel); //will take deltaX and deltaY, and calculate into the xPoint and yPoints.
             kineticInit = 0;
-            uprintf("init. xDel: %i, yDel: %i. friction*1000: %i \n", mVector.xDel, mVector.yDel, frictionMultiplier*friction*1000);
+            uprintf("init. xDel: %i, yDel: %i. friction: %i \n", mVector.xDel, mVector.yDel, frictionMultiplier*friction);
         }
 
         if (mVector.magValue > 0){

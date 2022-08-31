@@ -4,9 +4,12 @@
 
 #include QMK_KEYBOARD_H
 //#include "cirque_kinetic.h"
-extern float xVal, yVal;
+
+#define friction 230
+
+extern int16_t xVal, yVal;
 extern int8_t LIFTOFF; 
-extern int8_t frictionMultiplier;
+extern int32_t frictionMultiplier;
 extern void kineticCirque(report_mouse_t *mouse_report);
 
 #include "drivers/sensors/cirque_pinnacle.h"
@@ -14,7 +17,6 @@ extern void kineticCirque(report_mouse_t *mouse_report);
 //debug sector
 #include "print.h"
 
-#define friction 0.21
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -64,16 +66,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         #ifdef POINTING_DEVICE_ENABLE
             case kineticBrake:
                 if (record->event.pressed) {
-                    frictionMultiplier = 5;
+                    frictionMultiplier = 500;
                 } else {
-                    frictionMultiplier = 1;
+                    frictionMultiplier = 100;
                 }
             return false;
             case kineticGlide:
                 if (record->event.pressed) {
-                    frictionMultiplier = 0.42;
+                    frictionMultiplier = 5;
                 } else {
-                    frictionMultiplier = 1;
+                    frictionMultiplier = 100;
                 }
             return false;
         #endif

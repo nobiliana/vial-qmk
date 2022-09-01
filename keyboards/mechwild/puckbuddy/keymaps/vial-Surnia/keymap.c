@@ -100,16 +100,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 */
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    /*
-    if (is_keyboard_master()) {
-        pointing_device_task_Surnia(&mouse_report);
-        //mouse_report = pointing_device_task_user(mouse_report);
-    }
-    */
         pinnacle_data_t cirqueData = cirque_pinnacle_read_data();
 //        uprintf("x: %i, y: %i, z: %i\n", cirqueData.xValue, cirqueData.yValue, cirqueData.zValue);
         cirque_pinnacle_scale_data(&cirqueData, cirque_pinnacle_get_scale(), cirque_pinnacle_get_scale());
 //        uprintf("x: %i, y: %i, z: %i\n", cirqueData.xValue, cirqueData.yValue, cirqueData.zValue);
+
+    //KINETIC MOTION
+
             if (cirqueData.zValue){//records last mouse input prior to liftoff. 
                 if (cirqueData.xValue !=0 || cirqueData.yValue !=0){
                     xVal = cirqueData.xValue;
@@ -121,9 +118,11 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
                 LIFTOFF = 1;
                 //uprintf("lift detected!: %i, xVal: %i, yVal %i\n", LIFTOFF, xVal, yVal);
             }
-            
+        kineticCirque(&mouse_report);
 
-            kineticCirque(&mouse_report);
+    //RADIAL KEYS
+
+    
     return mouse_report;
 }
 

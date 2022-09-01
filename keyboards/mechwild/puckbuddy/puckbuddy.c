@@ -108,7 +108,7 @@ bool dip_switch_update_kb(uint8_t index, bool active) {
 }
 #endif
 
-/*
+
 #ifdef ENCODER_ENABLE
 bool encoder_update_kb(uint8_t index, bool clockwise) {
     if (!encoder_update_user(index, clockwise)) { return false; }
@@ -131,7 +131,7 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
     return true;
 }
 #endif
-*/
+
 
 #ifdef OLED_ENABLE   // OLED Functionality
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {

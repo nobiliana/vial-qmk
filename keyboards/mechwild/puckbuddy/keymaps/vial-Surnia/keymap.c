@@ -5,9 +5,6 @@
 #include QMK_KEYBOARD_H
 //#include "cirque_kinetic.h"
 
-#undef friction //need to undefine friction first, otherwise new value will not hold
-#define friction 230
-
 extern int16_t xVal, yVal;
 extern int8_t LIFTOFF; 
 extern int32_t frictionMultiplier;

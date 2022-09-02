@@ -51,7 +51,7 @@ void kineticCirque(report_mouse_t *mouse_report){
         if (kineticInit){ //initialize the vector values. ensures it is run once ONLY per liftoff event. 
             kineticVector(mVector.xDel, mVector.yDel); //will take deltaX and deltaY, and calculate into the xPoint and yPoints.
             kineticInit = 0;
-            uprintf("init. xDel: %i, yDel: %i. friction: %i \n", mVector.xDel, mVector.yDel, frictionMultiplier*friction);
+            //uprintf("init. xDel: %i, yDel: %i. friction: %i \n", mVector.xDel, mVector.yDel, frictionMultiplier*friction);
         }
 
         if (mVector.magValue > 0){
@@ -63,7 +63,7 @@ void kineticCirque(report_mouse_t *mouse_report){
                 /*
                 BREAKOUT POSITION FOR TAKING XPOINT AND YPOINT TO FIRMWARE POINTER CODE. GUARDS IN PLACE FOR NEGATIVE MAGNITUDES.
                 */
-               uprintf("Kinetic. vect.x: %d, vect.y: %d || mouse x: %i, mouse y: %i\n", mVector.xPoint, mVector.yPoint, mouse_report->x, mouse_report->y);
+               //uprintf("Kinetic. vect.x: %d, vect.y: %d || mouse x: %i, mouse y: %i\n", mVector.xPoint, mVector.yPoint, mouse_report->x, mouse_report->y);
         }
     } else if (!LIFTOFF){
         if (!kineticInit){

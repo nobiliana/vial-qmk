@@ -19,14 +19,16 @@ mouseThings mVector = {0};
 
 //friction function
 float kineticDrag (float vecAngle, float vecMagn){
-    if (vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100)) <=0){ //if magnitude of the vector is less than zero after calculation, zero it out. 
+    if (vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100)) <=0 || vecMagn >= 1000){ //if magnitude of the vector is less than zero after calculation, zero it out. 
+        //secondary guard, if glitch from cirque detected, zero out function. data over 1000 yields significant overflow in mouse_report.
         mVector.xPoint = 0;
         mVector.yPoint = 0;
+        return vecMagn = 0;
     } else {
         mVector.xPoint = cos(vecAngle)*vecMagn; //pull decimal precision down, to final values
         mVector.yPoint = sin(vecAngle)*vecMagn; //pull decimal precision down, to final values 
+        return vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100));
     }
-    return vecMagn - ((grav*friction*frictionMultiplier)/(decimalPrecision*100));
 }
 
 //inputs to this should be x and y vectors!
